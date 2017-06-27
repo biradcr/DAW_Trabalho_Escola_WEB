@@ -14,11 +14,44 @@
                                  action="#{controleInstituicao.novo()}"
                                  ajax="false"
                                  icon="ui-icon-plus"/>
-                <p:dataTable value="#{controleInstituicao.dao.lista}"
-                             var="obj">
-                    <p:column headerText="ID">
-                        <p:outputLabel value="#{obj.id}"/>
-                    </p:column>
+                <div align="center">
+                    <p:panelGrid columns="11">
+                        <p:outputLabel value="Ordem:"/>
+                        <p:selectOneMenu id="ordem" value="#{controleInstituicao.dao.ordem}">
+                            <f:selectItem itemLabel="ID" itemValue="id"/>
+                            <f:selectItem itemLabel="Nome" itemValue="nome"/>         
+                            <p:ajax update="listagem"/>
+                        </p:selectOneMenu>     
+                        <p:outputLabel value="Filtro:"/>
+                        <p:inputText value="#{controleInstituicao.dao.filtro}" size="30">
+                            <p:ajax update="listagem" event="keyup"/>
+                        </p:inputText>
+                        <p:commandButton value="Filtrar" update="listagem"/>
+                        <p:outputLabel value="Máximo de objetos: "/>
+                        <p:inputText value="#{controleInstituicao.dao.maximoObjetos}" size="3">
+                            <p:ajax update="listagem" event="keyup"/>
+                        </p:inputText>
+                        <p:commandButton value="Primeiro"
+                                         actionListener="#{controleInstituicao.dao.primeiro()}"
+                                         update="listagem"/>
+                        <p:commandButton value="Anterior"
+                                         actionListener="#{controleInstituicao.dao.anterior()}"
+                                         update="listagem"/>                        
+                        <p:commandButton value="Próximo"
+                                         actionListener="#{controleInstituicao.dao.proximo()}"
+                                         update="listagem"/>  
+                        <p:commandButton value="Último"
+                                         actionListener="#{controleInstituicao.dao.ultimo()}"
+                                         update="listagem"/>                        
+                    </p:panelGrid>
+                </div>                
+                <p:dataTable value="#{controleInstituicao.dao.listaObjetos}"
+                             var="obj" id="listagem">
+                    <f:facet name="footer">
+                             <p:column headerText="ID">
+                            <p:outputLabel value="#{obj.id}"/>
+                        </p:column>
+                    </f:facet>         
                     <p:column headerText="Nome">
                         <p:outputLabel value="#{obj.nome}"/>
                     </p:column>
@@ -43,7 +76,47 @@
                 </p:dataTable>
             </h:form>
         </ui:define>
-    </ui:composition>
+        <ui:define name="dialogos">
+            <p:dialog widgetVar="dlg" header="Edição" modal="true" resizable="false"
+                      position="center,top" width="450" height="480">
+                <h:form id="formEdicao">
+                    <p:growl id="growl"/>
 
+                    <p:tabView id="tab">
+                        <p:tab title="Dados Principais">
+                            <div align="center">
+                                <p:panelGrid columns="2">
+                                    <f:facet name="footer">
+                                        <div align="center">
+                                            <p:commandButton value="Salvar"
+                                                             icon="ui-icon-disk"
+                                                             actionListener="#{controleInstituicao.salvar()}"
+                                                             oncomplete="if(!args.validationFailed){PF('dlg').hide();}"
+                                                             update=":formEdicao"/>
+                                        </div>
+                                    </f:facet>
+                                    <p:outputLabel value="ID"/>
+                                    <p:inputText value="#{controleInstituicao.objeto.id}" size="10" readonly="true"/>
+                                    <p:outputLabel value="Nome" for="txtNome"/>
+                                    <p:inputText id="txtNome" value="#{controleInstituicao.objeto.nome}"
+                                                 size="40" maxlength="50" placeholder="Obrigatório"/>                                                                                       
+
+                                    <p:outputLabel value="Fundação" for="txtFundacao"/>
+                                    <p:calendar  
+                                        value="#{controleInstituicao.objeto.anoFundacao}"
+                                        pattern="dd/MM/yyyy"
+                                        id="txtFundacao"
+                                        locale="pt_BR" size="12" mask="true">
+                                        <f:converter converterId="converterCalendar"/>
+                                    </p:calendar>  
+                                </p:panelGrid>
+                            </div>
+                        </p:tab>
+                    </p:tabView>
+                </h:form>
+                <ui:include src="/templates/ajaxstatus.xhtml"/>
+            </p:dialog>          
+        </ui:define>
+    </ui:composition>
 </html>
 

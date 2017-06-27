@@ -3,18 +3,57 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
     <ui:composition template="../../index.xhtml">
-        <ui:define name="titulo">Sistema com JSF 2 e Primefaces da turma 5N1</ui:define>
+        <ui:define name="titulo">Manutenção Especialidades</ui:define>
         <ui:define name="conteudo">
-            <h:form>
+            <h:form id="formListagem">
                 <p:growl/>
                 <p:commandButton value="Novo"
-                                 action="#{controleEspecialidade.novo()}"
-                                 ajax="false"
-                                 icon="ui-icon-plus"/>
-                <p:dataTable value="#{controleEspecialidade.dao.lista}"
-                             var="obj">
+                                 actionListener="#{controleEspecialidade.novo()}"
+                                 update=":formEdicao"
+                                 icon="ui-icon-plus"
+                                 oncomplete="PF('dlg').show();"/>
+                <p:commandButton action="#{controleEspecialidade.relatorio()}"
+                                 value="Imprimir" ajax="false"
+                                 onclick="this.form.target = '_blank';"/>
+                <div align="center">
+                    <p:panelGrid columns="11">
+                        <p:outputLabel value="Ordem:"/>
+                        <p:selectOneMenu id="ordem" value="#{controleEspecialidade.dao.ordem}">
+                            <f:selectItem itemLabel="ID" itemValue="id"/>
+                            <f:selectItem itemLabel="Nome" itemValue="nome"/>         
+                            <p:ajax update="listagem"/>
+                        </p:selectOneMenu>     
+                        <p:outputLabel value="Filtro:"/>
+                        <p:inputText value="#{controleEspecialidade.dao.filtro}" size="30">
+                            <p:ajax update="listagem" event="keyup"/>
+                        </p:inputText>
+                        <p:commandButton value="Filtrar" update="listagem"/>
+                        <p:outputLabel value="Máximo de objetos: "/>
+                        <p:inputText value="#{controleEspecialidade.dao.maximoObjetos}" size="3">
+                            <p:ajax update="listagem" event="keyup"/>
+                        </p:inputText>
+                        <p:commandButton value="Primeiro"
+                                         actionListener="#{controleEspecialidade.dao.primeiro()}"
+                                         update="listagem"/>
+                        <p:commandButton value="Anterior"
+                                         actionListener="#{controleEspecialidade.dao.anterior()}"
+                                         update="listagem"/>                        
+                        <p:commandButton value="Próximo"
+                                         actionListener="#{controleEspecialidade.dao.proximo()}"
+                                         update="listagem"/>  
+                        <p:commandButton value="Último"
+                                         actionListener="#{controleEspecialidade.dao.ultimo()}"
+                                         update="listagem"/>                        
+                    </p:panelGrid>
+                </div>
+                <p:dataTable value="#{controleEspecialidade.dao.listaObjetos}"
+                             var="obj" id="listagem">
+                    <f:facet name="footer">
+                        <p:outputLabel value="#{controleEspecialidade.dao.mensagemNavegacao}"/>
+                    </f:facet>
                     <p:column headerText="ID">
                         <p:outputLabel value="#{obj.id}"/>
                     </p:column>
@@ -23,21 +62,52 @@
                     </p:column>
                     <p:column headerText="Ações">
                         <div align="center">
-                            <p:commandButton action="#{controleEspecialidade.editar(obj.id)}"
+                            <p:commandButton actionListener="#{controleEspecialidade.editar(obj.id)}"
                                              icon="ui-icon-pencil"
-                                             ajax="false"
+                                             update=":formEdicao"
+                                             oncomplete="PF('dlg').show();"
                                              title="Editar"/>
-                            <p:commandButton action="#{controleEspecialidade.remover(obj.id)}"
+                            <p:commandButton actionListener="#{controleEspecialidade.remover(obj.id)}"
                                              icon="ui-icon-tash"
-                                             ajax="false"
+                                             update="@form"
                                              onclick="if (!confirm('Confirmar a exclusão?'))
-                                                     return false"/>
+                                                         return false"/>
                         </div>
                     </p:column>
                 </p:dataTable>
             </h:form>
         </ui:define>
+        <ui:define name="dialogos">
+            <p:dialog widgetVar="dlg" header="Edição" modal="true" resizable="false"
+                      position="center,top" width="600" height="300">
+                <h:form id="formEdicao">
+                    <p:growl id="growl"/>
+                    <p:tabView id="tab">
+                        <p:tab title="Dados Principais">
+                            <div align="center">
+                                <p:panelGrid columns="2">
+                                    <f:facet name="footer">
+                                        <div align="center">
+                                            <p:commandButton value="Salvar"
+                                                             icon="ui-icon-disk"
+                                                             actionListener="#{controleEspecialidade.salvar()}"
+                                                             oncomplete="if(!args.validationFailed){PF('dlg').hide();}"
+                                                             update=":formEdicao :formListagem"/>
+                                        </div>
+                                    </f:facet>
+                                    <p:outputLabel value="ID"/>
+                                    <p:inputText value="#{controleEspecialidade.objeto.id}" size="10" readonly="true"/>
+                                    <p:outputLabel value="Nome" for="txtNome"/>
+                                    <p:inputText id="txtNome" value="#{controleEspecialidade.objeto.nome}"
+                                                 size="50" maxlength="50" placeholder="Obrigatório"/>
+                                </p:panelGrid>
+                            </div>
+                        </p:tab>
+                    </p:tabView>
+                </h:form>
+                <ui:include src="/templates/ajaxstatus.xhtml"/>
+            </p:dialog>
+        </ui:define>
     </ui:composition>
-
 </html>
 

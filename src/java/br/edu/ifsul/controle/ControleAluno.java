@@ -11,7 +11,6 @@ import br.edu.ifsul.util.Util;
 import java.io.Serializable;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
-
 /**
  *
  * @author ubiratan
@@ -31,48 +30,56 @@ public class ControleAluno implements Serializable{
         return "/privado/aluno/listar?faces-redirect=true";
     }
     
-    public String novo(){
-        objeto = new Aluno();
-        return "formulario";
+    public void novo(){
+        setObjeto(new Aluno());
     }
     
-    public String salvar(){
-        if(dao.salvar(objeto)){
-            Util.mensagemInformacao(dao.getMensagem());
-            return "listar";
-        }else{
-            return "formulario";
-        }
+    public void salvar(){
+        boolean persistiu;
+        if (getObjeto().getId() == null){
+            persistiu = getDao().persist(getObjeto());
+        } else {
+            persistiu = getDao().merge(getObjeto());
+        }        
+        if(persistiu){
+            Util.mensagemInformacao(getDao().getMensagem());            
+        } else {
+            Util.mensagemErro(getDao().getMensagem());            
+        }   
     }
     
     public String cancelar(){
         return "listar";
     }
     
-    public String editar(Integer id){
+    public void editar(Integer id){
         try {
-            objeto = dao.localizar(id);
-            return "formulario";
+            getDao().roolback();
+            setObjeto(getDao().localizar(id));
         } catch (Exception e) {
-            Util.mensagemErro("Erro ao recuperar objeto: "+Util.getMensagemErro(e));
-            return "listar";
+            Util.mensagemErro(e.getMessage());
         }
     }
     
     public void remover(Integer id){
-        objeto = dao.localizar(id);
-        if(dao.remover(objeto)){
-            Util.mensagemInformacao(dao.getMensagem());
+        try{
+            setObjeto(getDao().localizar(id));
+        if( getDao().remover(getObjeto())){
+            Util.mensagemInformacao(getDao().getMensagem());
         }else{
-            Util.mensagemErro(dao.getMensagem());
+            Util.mensagemErro(getDao().getMensagem());
         }
+        }catch(Exception e){
+            Util.mensagemErro(e.getMessage());
+        }
+        
     }
 
-    public AlunoDAO getDao() {
+    public AlunoDAO<Aluno> getDao() {
         return dao;
     }
 
-    public void setDao(AlunoDAO dao) {
+    public void setDao(AlunoDAO<Aluno> dao) {
         this.dao = dao;
     }
 

@@ -7,20 +7,35 @@
       xmlns:p="http://primefaces.org/ui">
     <f:view encoding="ISO-8859-1" contentType="text/html">
         <h:head>
-            <title><ui:insert name="titulo">titulo da pagina</ui:insert></title>
+            <title><ui:insert name="titulo">Página Inicial</ui:insert></title>
             <h:outputStylesheet library="css" name="estilos.css"/>
             <h:outputScript library="js" name="scripts.js"/>
         </h:head>
         <p:layout fullPage="true">
             <p:layoutUnit position="north" header="Sistema com SF2 e Primefaces - 5N1" style="text-align: center">
-                
+
             </p:layoutUnit>
             <p:layoutUnit position="west" header="Menu">
                 <h:form id="menu">
                     <p:menu>
                         <p:submenu label="Cadastros">
+                            <p:menuitem value="Aluno"
+                                        action="#{controleAluno.listar()}"
+                                        ajax="false"/>                            
+                            <p:menuitem value="Curso"
+                                        action="#{controleCurso.listar()}"              
+                                        ajax="false"/>                            
+                            <p:menuitem value="Disciplina"
+                                        action="#{controleDisciplina.listar()}"
+                                        ajax="false"/>
                             <p:menuitem value="Especialidade"
                                         action="#{controleEspecialidade.listar()}"
+                                        ajax="false"/>
+                            <p:menuitem value="Instituição"
+                                        action="#{controleInstituicao.listar()}"
+                                        ajax="false"/>
+                            <p:menuitem value="Professor"
+                                        action="#{controleProfessor.listar()}"
                                         ajax="false"/>
                         </p:submenu>
                     </p:menu>
@@ -28,7 +43,7 @@
             </p:layoutUnit>
             <p:layoutUnit position="center">
                 <ui:insert name="conteudo">
-                    
+
                 </ui:insert>
             </p:layoutUnit>
             <ui:insert name="dialogos"></ui:insert>

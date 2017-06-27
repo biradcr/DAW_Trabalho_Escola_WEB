@@ -7,6 +7,7 @@ package br.edu.ifsul.controle;
 
 import br.edu.ifsul.dao.EspecialidadeDAO;
 import br.edu.ifsul.dao.ProfessorDAO;
+import br.edu.ifsul.modelo.Especialidade;
 import br.edu.ifsul.modelo.Professor;
 import br.edu.ifsul.util.Util;
 import java.io.Serializable;
@@ -21,9 +22,9 @@ import javax.faces.bean.SessionScoped;
 @SessionScoped
 public class ControleProfessor implements Serializable{
     
-    private ProfessorDAO dao;
+    private ProfessorDAO<Professor> dao;
     private Professor objeto;
-    private EspecialidadeDAO daoEspecialidade; 
+    private EspecialidadeDAO<Especialidade> daoEspecialidade; 
     
     public ControleProfessor(){
         dao = new ProfessorDAO();
@@ -40,10 +41,18 @@ public class ControleProfessor implements Serializable{
     }
     
     public String salvar(){
-        if(dao.salvar(objeto)){
-            Util.mensagemInformacao(dao.getMensagem());
+        boolean persistiu;        
+        if(objeto.getId() == null){
+            persistiu = getDao().persist(objeto);
+        }else{
+            persistiu = getDao().merge(objeto);
+        }
+        
+        if(persistiu){
+            Util.mensagemInformacao(getDao().getMensagem());
             return "listar";
         }else{
+            Util.mensagemErro(getDao().getMensagem());
             return "formulario";
         }
     }
@@ -54,7 +63,7 @@ public class ControleProfessor implements Serializable{
     
     public String editar(Integer id){
         try {
-            objeto = dao.localizar(id);
+            objeto = getDao().localizar(id);
             return "formulario";
         } catch (Exception e) {
             Util.mensagemErro("Erro ao recuperar objeto: "+Util.getMensagemErro(e));
@@ -63,19 +72,19 @@ public class ControleProfessor implements Serializable{
     }
     
     public void remover(Integer id){
-        objeto = dao.localizar(id);
-        if(dao.remover(objeto)){
-            Util.mensagemInformacao(dao.getMensagem());
+        objeto = getDao().localizar(id);
+        if(getDao().remover(objeto)){
+            Util.mensagemInformacao(getDao().getMensagem());
         }else{
-            Util.mensagemErro(dao.getMensagem());
+            Util.mensagemErro(getDao().getMensagem());
         }
     }
 
-    public ProfessorDAO getDao() {
+    public ProfessorDAO<Professor> getDao() {
         return dao;
     }
 
-    public void setDao(ProfessorDAO dao) {
+    public void setDao(ProfessorDAO<Professor> dao) {
         this.dao = dao;
     }
 
@@ -87,11 +96,11 @@ public class ControleProfessor implements Serializable{
         this.objeto = objeto;
     }
 
-    public EspecialidadeDAO getDaoEspecialidade() {
+    public EspecialidadeDAO<Especialidade> getDaoEspecialidade() {
         return daoEspecialidade;
     }
 
-    public void setDaoEspecialidade(EspecialidadeDAO daoEspecialidade) {
+    public void setDaoEspecialidade(EspecialidadeDAO<Especialidade> daoEspecialidade) {
         this.daoEspecialidade = daoEspecialidade;
     }
     

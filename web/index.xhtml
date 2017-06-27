@@ -19,11 +19,17 @@
                 <h:form id="menu">
                     <p:menu>
                         <p:submenu label="Cadastros">
-                            <p:menuitem value="Especialidade"
-                                        action="#{controleEspecialidade.listar()}"
-                                        ajax="false"/>
                             <p:menuitem value="Aluno"
                                         action="#{controleAluno.listar()}"
+                                        ajax="false"/>                            
+                            <p:menuitem value="Curso"
+                                        action="#{controleCurso.listar()}"              
+                                        ajax="false"/>                            
+                            <p:menuitem value="Disciplina"
+                                        action="#{controleDisciplina.listar()}"
+                                        ajax="false"/>
+                            <p:menuitem value="Especialidade"
+                                        action="#{controleEspecialidade.listar()}"
                                         ajax="false"/>
                             <p:menuitem value="Instituição"
                                         action="#{controleInstituicao.listar()}"
