@@ -80,12 +80,12 @@ public class ControleCurso implements Serializable {
 
     public void remover(Integer id) {
 //        try {
-            objeto = dao.localizar(id);
-            if (dao.remover(objeto)) {
-                Util.mensagemInformacao(dao.getMensagem());
-            } else {
-                Util.mensagemErro(dao.getMensagem());
-            }
+        objeto = dao.localizar(id);
+        if (dao.remover(objeto)) {
+            Util.mensagemInformacao(dao.getMensagem());
+        } else {
+            Util.mensagemErro(dao.getMensagem());
+        }
 //        } catch (Exception e) {
 //            Util.mensagemErro(e.getMessage());
 //        }
@@ -93,28 +93,35 @@ public class ControleCurso implements Serializable {
     }
 
     public void adicionarDisciplina() {
-        System.out.println("Curso: "+disciplina.getCurso().getNome());
-        objeto.getListDisciplina().add(disciplina);
-        Util.mensagemInformacao("Disciplina inserida com sucesso");
+        if (novaInformacao) {
+            disciplina.setCurso(objeto);
+            objeto.getListDisciplina().add(disciplina);
+            Util.mensagemInformacao("Disciplina inserida com sucesso");
+        } else {
+            objeto.getListDisciplina().remove(disciplina);
+            objeto.getListDisciplina().add(disciplina);
+            Util.mensagemInformacao("Disciplina alterada com sucesso");
+        }
+
     }
-    
-    public void novaDisciplina(){
+
+    public void novaDisciplina() {
         disciplina = new Disciplina();
         System.out.println("Nova disciplina OK");
         novaInformacao = true;
     }
-    
-    public void alterarDisciplina(int index){
+
+    public void alterarDisciplina(int index) {
         disciplina = objeto.getListDisciplina().get(index);
         novaInformacao = false;
     }
-    
-    public void removerDisciplina(int index){
+
+    public void removerDisciplina(int index) {
         objeto.getListDisciplina().remove(index);
         Util.mensagemInformacao("Disciplina removida com sucesso");
     }
-    
-     public Curso getObjeto() {
+
+    public Curso getObjeto() {
         return objeto;
     }
 
@@ -130,7 +137,6 @@ public class ControleCurso implements Serializable {
         this.dao = dao;
     }
 
-       
     public InstituicaoDAO<Instituicao> getDaoInstituicao() {
         return daoInst;
     }
@@ -138,7 +144,7 @@ public class ControleCurso implements Serializable {
     public void setDaoInstituicao(InstituicaoDAO<Instituicao> daoInstituicao) {
         this.daoInst = daoInstituicao;
     }
-    
+
     public Boolean getNovaInformacao() {
         return novaInformacao;
     }
@@ -165,8 +171,7 @@ public class ControleCurso implements Serializable {
 
     public void relatorio() {
         HashMap parametros = new HashMap();
-        UtilRelatorios.imprimeRelatorio("relatorioCurso", parametros,
-                dao.getListaTodos());
+        UtilRelatorios.imprimeRelatorio("relatorioCurso", parametros, dao.getListaTodos());
     }
 
 }

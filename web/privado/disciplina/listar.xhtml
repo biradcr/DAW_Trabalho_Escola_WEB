@@ -10,8 +10,6 @@
         <ui:define name="conteudo">
             <h:form id="formListagem">
                 <p:growl/>
-                <p:messages/>
-                
                 <div align="center">
                     <p:panelGrid columns="11">
                         <p:outputLabel value="Ordem:"/>
@@ -116,9 +114,7 @@
                                                          update="listaAlunos :formEdicao:growl"
                                                          id="btnAdicionarAluno"
                                                          process="btnAdicionarAluno selectAluno"
-                                                         icon="ui-icon-plus" />
-                                        
-                                        
+                                                         icon="ui-icon-plus" />                                    
                                     </p:panelGrid>
                                 </f:facet>
                                 
@@ -141,16 +137,9 @@
                             </p:dataTable>
                         </p:tab>
                     </p:tabView>
-
-
-                    
-                </h:form>
+ </h:form>
                 <ui:include src="/templates/ajaxstatus.xhtml"/>
             </p:dialog>
-            
-            
-            
-            
-        </ui:define>
+          </ui:define>
     </ui:composition>       
 </html>
